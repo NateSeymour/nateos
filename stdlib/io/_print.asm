@@ -20,7 +20,14 @@ _print:
     xor edx,edx
 
     .loop:
+        test [eax], [eax]
+        jz .break
+
+        movb dl, [eax]
+        mov [ebx + 
         
+
+    .break:
 
     ; return 0
     xor eax, eax
@@ -28,3 +35,4 @@ _print:
     pop edx
     pop ebp
     ret
+
