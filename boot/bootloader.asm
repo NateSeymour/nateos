@@ -1,5 +1,6 @@
 bits 16
 section .boot
+global boot
 boot:
     .enable_a20:
         mov ax, 0x2401
@@ -66,7 +67,14 @@ copy_target:
 
 bits 32 
 init:
+    mov esp, kernel_stack_top
+    extern _kernel_main
+    call _kernel_main
     cli
     hlt
 
-times 1024 - ($-$$) db 0
+section .bss
+align 4
+kernel_stack_bottom: equ $
+    resb 16384 ; 16 KB
+kernel_stack_top:

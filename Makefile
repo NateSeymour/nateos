@@ -1,10 +1,16 @@
-all: bootloader kernel
+CC=gcc
+C_COMPILE_ARGS=-m32 -nostdlib -ffreestanding -mno-red-zone -fno-exceptions -Wall -Wextra -Werror
+
+all: bootloader kernel link
 
 output_dir: 
-	mkdir -p build build/bin
+	mkdir -p build build/bin build/include
 
 bootloader: output_dir
-	nasm -f elf32 bootloader.asm -o build/bin/boot.o
+	nasm -f elf32 boot/bootloader.asm -o build/boot.o
 
 kernel: bootloader
-	i386-elf-_gcc x86_64-elf-gcc -m64 build/bin/boot.o -o kernel.bin -nostdlib -ffreestanding -mno-red-zone -fno-exceptions -nostdlib -fno-rtti -Wall -Wextra -Werror -T linker.ld
+	$(CC) $(C_COMPILE_ARGS) -c kernel/kernel.c -o build/kernel.o 	
+
+link: bootloader kernel	
+	$(CC) -m32 build/boot.o build/kernel.o -o build/bin/kernel.bin -nostdlib -ffreestanding -mno-red-zone -T linker.ld
